@@ -1,0 +1,175 @@
+{
+  "info": {
+    "name": "AI Job Search & Resume Assistant",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    { "key": "base_url", "value": "http://localhost:8000" },
+    { "key": "token", "value": "" }
+  ],
+  "item": [
+    {
+      "name": "Auth",
+      "item": [
+        {
+          "name": "Register",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{\n  \"email\": \"jane@example.com\",\n  \"password\": \"s3cret123\"\n}" },
+            "url": "{{base_url}}/auth/register"
+          }
+        },
+        {
+          "name": "Login",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/x-www-form-urlencoded" }],
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                { "key": "username", "value": "jane@example.com" },
+                { "key": "password", "value": "s3cret123" }
+              ]
+            },
+            "url": "{{base_url}}/auth/login"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Resume",
+      "item": [
+        {
+          "name": "Upload resume",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "body": { "mode": "formdata", "formdata": [{ "key": "file", "type": "file", "src": "" }] },
+            "url": "{{base_url}}/resume/upload"
+          }
+        },
+        {
+          "name": "Get my resume",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": "{{base_url}}/resume/me"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Match",
+      "item": [
+        {
+          "name": "Match resume to job",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "body": { "mode": "raw", "raw": "{\n  \"job_description\": \"We're looking for a backend engineer with Python, FastAPI, and AWS experience.\"\n}" },
+            "url": "{{base_url}}/match"
+          }
+        },
+        {
+          "name": "Tailor bullets",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "body": { "mode": "raw", "raw": "{\n  \"job_description\": \"We're looking for a backend engineer with Python, FastAPI, and AWS experience.\"\n}" },
+            "url": "{{base_url}}/match/bullets"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Interview",
+      "item": [
+        {
+          "name": "Generate questions",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "body": { "mode": "raw", "raw": "{\n  \"job_description\": \"Backend engineer role, Python and AWS\",\n  \"num_questions\": 5\n}" },
+            "url": "{{base_url}}/interview/questions"
+          }
+        },
+        {
+          "name": "Mock interview turn",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "body": { "mode": "raw", "raw": "{\n  \"job_description\": \"Backend engineer role, Python and AWS\",\n  \"history\": []\n}" },
+            "url": "{{base_url}}/interview/mock"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Applications",
+      "item": [
+        {
+          "name": "List applications",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": "{{base_url}}/applications"
+          }
+        },
+        {
+          "name": "Create application",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "body": { "mode": "raw", "raw": "{\n  \"company\": \"Acme\",\n  \"job_title\": \"Backend Engineer\"\n}" },
+            "url": "{{base_url}}/applications"
+          }
+        },
+        {
+          "name": "Update application status",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "body": { "mode": "raw", "raw": "{\n  \"status\": \"applied\"\n}" },
+            "url": "{{base_url}}/applications/1"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Chat",
+      "item": [
+        {
+          "name": "Career chat",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "body": { "mode": "raw", "raw": "{\n  \"message\": \"How should I explain a career gap in an interview?\"\n}" },
+            "url": "{{base_url}}/chat"
+          }
+        }
+      ]
+    }
+  ]
+}
