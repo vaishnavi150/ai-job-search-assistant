@@ -9,3 +9,4 @@ backend/.env
 frontend/node_modules/
 frontend/dist/
 frontend/.env
+backend/.fastembed_cache/

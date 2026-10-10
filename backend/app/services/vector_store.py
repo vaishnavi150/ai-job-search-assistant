@@ -41,9 +41,28 @@ def has_index(user_id: int) -> bool:
     return os.path.exists(_index_path(user_id)) and os.path.exists(_chunks_path(user_id))
 
 
+def _rebuild_from_db(user_id: int) -> None:
+    """Rebuilds a missing index from the resume text stored in the database.
+    Hosts with ephemeral disks (e.g. Render's free tier) wipe faiss_indexes/
+    on every restart, but the resume itself survives in the database."""
+    from app.database import SessionLocal
+    from app.models import Resume
+    from app.utils.chunking import chunk_text
+
+    db = SessionLocal()
+    try:
+        resume = db.query(Resume).filter(Resume.user_id == user_id).first()
+        if resume:
+            build_index(user_id, chunk_text(resume.raw_text))
+    finally:
+        db.close()
+
+
 def search(user_id: int, query: str, top_k: int = 5) -> list[str]:
     """Returns the top_k most relevant resume chunks for the query
     (e.g. a job description), or [] if the user has no resume indexed."""
+    if not has_index(user_id):
+        _rebuild_from_db(user_id)
     if not has_index(user_id):
         return []
 
