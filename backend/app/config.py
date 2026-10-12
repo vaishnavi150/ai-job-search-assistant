@@ -42,7 +42,7 @@ class Settings(BaseSettings):
     # "smtp" (any SMTP server - local dev or paid hosts), or "" (disabled).
     email_provider: str = ""
     email_from: str = ""
-    email_from_name: str = "AI Job Search Assistant"
+    email_from_name: str = "Nextrung"
     brevo_api_key: str = ""
     smtp_host: str = ""
     smtp_port: int = 587

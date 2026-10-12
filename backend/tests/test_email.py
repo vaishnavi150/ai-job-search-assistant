@@ -46,7 +46,7 @@ def test_brevo_request_shape(brevo, caplog):
     assert url == "https://api.brevo.com/v3/smtp/email"
     assert kwargs["headers"]["api-key"] == "xkeysib-test"
     body = kwargs["json"]
-    assert body["sender"] == {"email": "noreply@example.com", "name": "AI Job Search Assistant"}
+    assert body["sender"] == {"email": "noreply@example.com", "name": "Nextrung"}
     assert body["to"] == [{"email": "jane@example.com"}]
     assert RESET_URL in body["textContent"]
     assert 'href="https://ai-job-assistant-web.onrender.com/reset-password?token=abc123"' in body["htmlContent"]

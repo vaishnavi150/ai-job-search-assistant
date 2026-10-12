@@ -32,7 +32,7 @@ async def lifespan(_: FastAPI):
 
 
 app = FastAPI(
-    title="AI Job Search & Resume Assistant",
+    title="Nextrung API",
     description="Job search, resume matching, tailoring, interview prep, and application tracking.",
     version="1.0.0",
     lifespan=lifespan,

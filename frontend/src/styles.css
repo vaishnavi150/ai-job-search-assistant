@@ -8,13 +8,15 @@
   --surface-3: #e8ebf3;
   --border: #e2e5ee;
   --border-strong: #cdd2df;
-  --text: #171a26;
-  --text-2: #4a5065;
-  --text-3: #6b7187;
-  --accent: #4f46e5;
-  --accent-hover: #4338ca;
-  --accent-soft: #eef0ff;
-  --accent-text: #4338ca;
+  --text: #111c2b;
+  --text-2: #475266;
+  --text-3: #667085;
+  /* Nextrung brand: rung teal + spark amber */
+  --accent: #0f766e;
+  --accent-hover: #115e59;
+  --accent-soft: #e6f5f2;
+  --accent-text: #0f766e;
+  --spark: #f59e0b;
   --on-accent: #ffffff;
   --good: #15803d;
   --good-soft: #e7f6ec;
@@ -24,7 +26,7 @@
   --bad-soft: #fdecec;
   --info: #1d4ed8;
   --info-soft: #e8f0fe;
-  --focus: 0 0 0 3px rgba(79, 70, 229, 0.35);
+  --focus: 0 0 0 3px rgba(15, 118, 110, 0.35);
   --shadow-sm: 0 1px 2px rgba(16, 24, 40, 0.05);
   --shadow: 0 1px 3px rgba(16, 24, 40, 0.06), 0 4px 16px rgba(16, 24, 40, 0.05);
   --shadow-lg: 0 12px 40px rgba(16, 24, 40, 0.18);
@@ -32,6 +34,7 @@
   --radius: 10px;
   --radius-lg: 14px;
   --sidebar-w: 248px;
+  --font-display: 'Plus Jakarta Sans Variable', 'Segoe UI', ui-sans-serif, -apple-system, sans-serif;
   --font: 'Inter', ui-sans-serif, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
   --mono: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
   color-scheme: light;
@@ -39,20 +42,21 @@
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --bg: #0d0f16;
-    --surface: #151823;
-    --surface-2: #1b1f2c;
-    --surface-3: #242938;
-    --border: #262b3a;
-    --border-strong: #353b4e;
+    --bg: #0b1016;
+    --surface: #121a22;
+    --surface-2: #18222c;
+    --surface-3: #212d38;
+    --border: #22303b;
+    --border-strong: #31424f;
     --text: #e9ebf2;
     --text-2: #b4b9c9;
     --text-3: #8b91a5;
-    --accent: #7c74ff;
-    --accent-hover: #918aff;
-    --accent-soft: #23224a;
-    --accent-text: #aaa5ff;
-    --on-accent: #ffffff;
+    --accent: #2dd4bf;
+    --accent-hover: #5eead4;
+    --accent-soft: #0e2b2a;
+    --accent-text: #5eead4;
+    --on-accent: #042f2e;
+    --spark: #fbbf24;
     --good: #4ade80;
     --good-soft: #13291d;
     --warn: #fbbf24;
@@ -61,7 +65,7 @@
     --bad-soft: #321718;
     --info: #7aa7ff;
     --info-soft: #172340;
-    --focus: 0 0 0 3px rgba(124, 116, 255, 0.45);
+    --focus: 0 0 0 3px rgba(45, 212, 191, 0.45);
     --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.3);
     --shadow: 0 1px 3px rgba(0, 0, 0, 0.35), 0 4px 16px rgba(0, 0, 0, 0.25);
     --shadow-lg: 0 12px 40px rgba(0, 0, 0, 0.5);
@@ -86,7 +90,7 @@ body {
   -webkit-font-smoothing: antialiased;
 }
 
-h1, h2, h3 { line-height: 1.25; margin: 0; letter-spacing: -0.01em; }
+h1, h2, h3 { font-family: var(--font-display); line-height: 1.25; margin: 0; letter-spacing: -0.015em; }
 p { margin: 0; }
 a { color: inherit; }
 
@@ -356,19 +360,20 @@ input[type='checkbox'] {
 }
 
 .full-page-center { min-height: 70vh; display: grid; place-items: center; padding: 24px; }
+.not-found { min-height: 100vh; align-content: center; gap: 24px; }
+.not-found-brand { text-decoration: none; color: var(--text); }
 
 /* ==========================================================================
    Brand
    ========================================================================== */
-.brand { display: inline-flex; align-items: center; gap: 10px; font-weight: 700; font-size: 15px; }
-.brand-mark {
-  width: 30px; height: 30px;
-  display: grid; place-items: center;
-  border-radius: 8px;
-  background: linear-gradient(135deg, var(--accent), #8b5cf6);
-  color: #fff;
+.brand {
+  display: inline-flex; align-items: center; gap: 10px;
+  font-family: var(--font-display); font-weight: 800; font-size: 18px; letter-spacing: -0.03em;
 }
-.brand-ai { color: var(--accent-text); }
+.brand-mark { border-radius: 8px; box-shadow: 0 2px 6px rgba(15, 118, 110, 0.3); }
+.brand-accent { color: var(--accent-text); }
+.brand:hover .logo-spark { animation: spark 0.9s ease; transform-origin: 26px 7px; }
+@keyframes spark { 40% { transform: scale(1.35) rotate(45deg); } }
 
 /* ==========================================================================
    App shell: sidebar + main
@@ -468,7 +473,7 @@ input[type='checkbox'] {
   width: 40px; height: 40px;
   display: grid; place-items: center;
   border-radius: 10px;
-  background: var(--accent); color: #fff;
+  background: var(--accent); color: var(--on-accent);
   flex-shrink: 0;
 }
 
@@ -747,12 +752,18 @@ input[type='checkbox'] {
   padding: 40px 48px;
   color: #fff;
   background:
-    radial-gradient(circle at 15% 15%, rgba(255, 255, 255, 0.14), transparent 40%),
-    linear-gradient(150deg, #4338ca 0%, #6d28d9 55%, #7c3aed 100%);
+    radial-gradient(circle at 90% 10%, rgba(153, 246, 228, 0.14), transparent 30%),
+    radial-gradient(circle at 10% 90%, rgba(45, 212, 191, 0.25), transparent 40%),
+    linear-gradient(155deg, #062c2b 0%, #0b4f4a 50%, #0f766e 100%);
 }
-.auth-aside .brand-mark { background: rgba(255, 255, 255, 0.18); }
-.auth-aside .brand-ai { color: #ddd6fe; }
-.auth-pitch h2 { font-size: 30px; font-weight: 700; max-width: 380px; margin-bottom: 28px; letter-spacing: -0.02em; }
+.auth-aside .brand-mark { box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.25); }
+.auth-aside .brand-accent { color: #99f6e4; }
+.auth-eyebrow {
+  display: inline-block; margin-bottom: 14px; padding: 4px 10px;
+  border-radius: 999px; background: rgba(255, 255, 255, 0.12);
+  font-size: 12px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: #ccfbf1;
+}
+.auth-pitch h2 { font-size: 32px; line-height: 1.2; font-weight: 700; max-width: 380px; margin-bottom: 28px; letter-spacing: -0.02em; }
 .auth-pitch ul { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 16px; }
 .auth-pitch li { display: flex; align-items: center; gap: 12px; font-size: 15px; color: rgba(255, 255, 255, 0.92); }
 .pitch-icon { width: 32px; height: 32px; display: grid; place-items: center; border-radius: 8px; background: rgba(255, 255, 255, 0.15); flex-shrink: 0; }
@@ -832,3 +843,9 @@ input[type='checkbox'] {
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; scroll-behavior: auto !important; }
 }
+
+/* ==========================================================================
+   Entrance motion (disabled by the reduced-motion rule above)
+   ========================================================================== */
+@keyframes rise-in { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
+.page, .auth-card { animation: rise-in 0.28s ease-out both; }

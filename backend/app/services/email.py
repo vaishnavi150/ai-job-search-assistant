@@ -88,7 +88,7 @@ def send_password_reset_email(to: str, reset_url: str) -> None:
     """Meant to run as a background task, so failures are logged, not raised -
     the API response is identical whether or not the email went out."""
     minutes = settings.password_reset_token_minutes
-    subject = "Reset your AI Job Search Assistant password"
+    subject = "Reset your Nextrung password"
     text_body = (
         "We received a request to reset the password for your account.\n\n"
         f"Reset it here (the link expires in {minutes} minutes and works once):\n{reset_url}\n\n"
@@ -96,15 +96,16 @@ def send_password_reset_email(to: str, reset_url: str) -> None:
     )
     safe_url = html.escape(reset_url, quote=True)
     html_body = f"""<!doctype html>
-<html><body style="margin:0;background:#f4f5f7;font-family:-apple-system,Segoe UI,Roboto,sans-serif;color:#1f2430">
+<html><body style="margin:0;background:#f2f6f6;font-family:-apple-system,Segoe UI,Roboto,sans-serif;color:#111c2b">
   <table role="presentation" width="100%" cellpadding="0" cellspacing="0"><tr><td align="center" style="padding:32px 16px">
     <table role="presentation" width="100%" style="max-width:480px;background:#fff;border-radius:12px;padding:32px">
       <tr><td>
+        <p style="margin:0 0 24px;font-size:20px;font-weight:800;letter-spacing:-0.5px">Next<span style="color:#0f766e">rung</span></p>
         <h1 style="font-size:20px;margin:0 0 16px">Reset your password</h1>
-        <p style="font-size:15px;line-height:1.5;margin:0 0 24px">We received a request to reset the password for your AI Job Search Assistant account.</p>
-        <p style="margin:0 0 24px"><a href="{safe_url}" style="display:inline-block;background:#4f46e5;color:#fff;text-decoration:none;padding:12px 20px;border-radius:8px;font-weight:600">Choose a new password</a></p>
-        <p style="font-size:13px;line-height:1.5;color:#5b6170;margin:0 0 8px">This link expires in {minutes} minutes and can only be used once.</p>
-        <p style="font-size:13px;line-height:1.5;color:#5b6170;margin:0">If you didn't request this, ignore this email - your password won't change.</p>
+        <p style="font-size:15px;line-height:1.5;margin:0 0 24px">We received a request to reset the password for your Nextrung account.</p>
+        <p style="margin:0 0 24px"><a href="{safe_url}" style="display:inline-block;background:#0f766e;color:#fff;text-decoration:none;padding:12px 20px;border-radius:8px;font-weight:600">Choose a new password</a></p>
+        <p style="font-size:13px;line-height:1.5;color:#5b6577;margin:0 0 8px">This link expires in {minutes} minutes and can only be used once.</p>
+        <p style="font-size:13px;line-height:1.5;color:#5b6577;margin:0">If you didn't request this, ignore this email - your password won't change.</p>
       </td></tr>
     </table>
   </td></tr></table>

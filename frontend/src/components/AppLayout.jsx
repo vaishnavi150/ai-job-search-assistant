@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { NavLink, Outlet, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import Icon from './Icon';
+import { Brand } from './Logo';
 import ServerWakeBanner from './ServerWakeBanner';
 
 export const NAV_ITEMS = [
@@ -15,21 +16,16 @@ export const NAV_ITEMS = [
   { to: '/app/chat', label: 'Career chat', icon: 'chat' },
 ];
 
-export function Brand() {
-  return (
-    <span className="brand">
-      <span className="brand-mark" aria-hidden="true">
-        <Icon name="sparkles" size={16} />
-      </span>
-      <span className="brand-name">AI Job Search <span className="brand-ai">Assistant</span></span>
-    </span>
-  );
-}
-
 export default function AppLayout() {
   const { email, logout } = useAuth();
   const [menuOpen, setMenuOpen] = useState(false);
   const location = useLocation();
+
+  useEffect(() => {
+    const item = NAV_ITEMS.find((i) => i.to === location.pathname.replace(/\/$/, ''));
+    const label = item?.label ?? (location.pathname.startsWith('/app/account') ? 'Account' : null);
+    document.title = label ? `${label} · Nextrung` : 'Nextrung · AI career assistant';
+  }, [location.pathname]);
 
   // Close the mobile drawer on navigation, and focus the page for screen readers.
   useEffect(() => {

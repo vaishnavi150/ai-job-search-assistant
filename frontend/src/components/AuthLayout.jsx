@@ -1,4 +1,5 @@
-import { Brand } from './AppLayout';
+import { useEffect } from 'react';
+import { Brand } from './Logo';
 import Icon from './Icon';
 import ServerWakeBanner from './ServerWakeBanner';
 
@@ -10,12 +11,17 @@ const HIGHLIGHTS = [
 ];
 
 export default function AuthLayout({ title, subtitle, children }) {
+  useEffect(() => {
+    document.title = `${title} · Nextrung`;
+  }, [title]);
+
   return (
     <div className="auth-shell">
       <section className="auth-aside" aria-hidden="true">
         <Brand />
         <div className="auth-pitch">
-          <h2>Your AI co-pilot for the job hunt.</h2>
+          <p className="auth-eyebrow">AI career assistant</p>
+          <h2>Climb to your next role, one rung at a time.</h2>
           <ul>
             {HIGHLIGHTS.map((h) => (
               <li key={h.text}>
@@ -25,7 +31,7 @@ export default function AuthLayout({ title, subtitle, children }) {
             ))}
           </ul>
         </div>
-        <p className="auth-aside-foot">Free and open-source.</p>
+        <p className="auth-aside-foot">© Nextrung · Free to use</p>
       </section>
       <main className="auth-main">
         <ServerWakeBanner />

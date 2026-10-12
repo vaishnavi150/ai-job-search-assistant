@@ -1,13 +1,29 @@
-# AI Job Search & Resume Assistant
+<p align="center">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="docs/brand/nextrung-logo-dark.png">
+    <img src="docs/brand/nextrung-logo-light.png" alt="Nextrung" width="300">
+  </picture>
+</p>
 
-A full-stack AI assistant for the job hunt: live job search ranked against
-your resume, resume ↔ job-description match scoring with skill gaps,
-RAG-grounded resume tailoring, interview question generation, a live mock
-interviewer, a career chat assistant, and an application tracker.
+<p align="center"><strong>Climb to your next role, one rung at a time.</strong></p>
+
+<p align="center">
+  <a href="https://ai-job-assistant-web.onrender.com">Live demo</a> ·
+  <a href="#local-development">Run locally</a> ·
+  <a href="#deploying-to-render">Deploy</a>
+</p>
+
+**Nextrung** is a full-stack AI career assistant: live job search ranked
+against your resume, resume ↔ job-description match scoring with skill
+gaps, RAG-grounded resume tailoring, interview question generation, a live
+mock interviewer, a career chat assistant, and an application tracker.
 
 Runs on **free infrastructure**: a local Ollama model or Groq's free tier
 for text generation, open-source embeddings, free public job boards, and
 Render's free tier for hosting. No paid API is required.
+
+> The live demo runs on Render's free tier, so the first request after a
+> quiet spell can take up to a minute while the server wakes up.
 
 ## Features
 
@@ -126,7 +142,7 @@ tab on Render). Never commit real values - `.env` files are git-ignored.
 | `OLLAMA_BASE_URL` / `OLLAMA_MODEL` | With Ollama | Defaults `http://localhost:11434` / `llama3.2` |
 | `EMAIL_PROVIDER` | For password reset | `brevo`, `smtp`, or empty to disable |
 | `EMAIL_FROM` | For password reset | Sender address (must be verified in Brevo) |
-| `EMAIL_FROM_NAME` | No | Default `AI Job Search Assistant` |
+| `EMAIL_FROM_NAME` | No | Default `Nextrung` |
 | `BREVO_API_KEY` | With Brevo | Brevo → SMTP & API → API keys |
 | `SMTP_HOST` / `SMTP_PORT` / `SMTP_USERNAME` / `SMTP_PASSWORD` / `SMTP_USE_TLS` | With SMTP | e.g. Gmail: `smtp.gmail.com`, `587`, your address, an **App Password** |
 | `PASSWORD_RESET_TOKEN_MINUTES` | No | Default 30 |
@@ -169,7 +185,9 @@ aren't available and the server logs a warning.
 `render.yaml` is a Render Blueprint defining the Postgres database
 (`ai-job-assistant-db`), the API (`ai-job-assistant-api`, Python, root
 `backend/`) and the static frontend (`ai-job-assistant-web`, root
-`frontend/`).
+`frontend/`). The service names predate the Nextrung name and are kept on
+purpose: Render matches Blueprint services by name, and the `.onrender.com`
+URLs, `FRONTEND_ORIGIN` and `VITE_API_BASE_URL` all depend on them.
 
 - **API** - build: `pip install -r requirements.txt && python -m app.services.embeddings`
   (pre-downloads the embedding model); start:
@@ -188,6 +206,16 @@ Free-tier notes: the API sleeps after ~15 minutes idle (the UI shows a
 "waking up" banner on slow first requests), the disk is ephemeral (FAISS
 indexes are rebuilt automatically from resumes stored in Postgres), and
 rate-limit counters are in memory (fine for the single free instance).
+
+## Brand
+
+| | |
+|---|---|
+| Name | **Nextrung** - the next rung on your career ladder |
+| Mark | Three rungs stepping up toward an AI spark (`frontend/public/favicon.svg`, also `docs/brand/nextrung-mark.svg`) |
+| Colours | Rung teal `#0f766e` (dark mode `#2dd4bf`), spark amber `#f59e0b`, ink `#111c2b` |
+| Type | Plus Jakarta Sans (headings and wordmark, self-hosted via Fontsource), system UI font for body text |
+| Assets | `docs/brand/nextrung-logo-{light,dark}.png` (README wordmark), `frontend/public/og-image.png` (1200×630 link preview), `frontend/public/apple-touch-icon.png` |
 
 ## Project layout
 
@@ -209,9 +237,11 @@ frontend/
     api.js                 fetch wrapper: auth header, timeouts, friendly errors
     context/AuthContext.jsx
     components/            AppLayout (sidebar), AuthLayout, ui kit, PasswordField, ChatWindow…
+    components/Logo.jsx    Nextrung logo mark + wordmark
     pages/                 Login, Register, ForgotPassword, ResetPassword, Overview, Resume,
                            Jobs, Match, Interview, MockInterview, Applications, Chat, Account
     utils/password.js      client-side mirror of the password policy
+docs/brand/                Logo files for the README
 postman/                   API collection for manual testing
 render.yaml                Render Blueprint
 ```
