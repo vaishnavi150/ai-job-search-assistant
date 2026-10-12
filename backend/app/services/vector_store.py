@@ -33,7 +33,7 @@ def build_index(user_id: int, chunks: list[str]) -> None:
     index.add(vectors)
 
     faiss.write_index(index, _index_path(user_id))
-    with open(_chunks_path(user_id), "w") as f:
+    with open(_chunks_path(user_id), "w", encoding="utf-8") as f:
         json.dump(chunks, f)
 
 
@@ -67,13 +67,23 @@ def search(user_id: int, query: str, top_k: int = 5) -> list[str]:
         return []
 
     index = faiss.read_index(_index_path(user_id))
-    with open(_chunks_path(user_id)) as f:
+    with open(_chunks_path(user_id), encoding="utf-8") as f:
         chunks = json.load(f)
 
     query_vec = np.expand_dims(embed_text(query), axis=0)
     k = min(top_k, len(chunks))
     _, indices = index.search(query_vec, k)
     return [chunks[i] for i in indices[0] if i != -1]
+
+
+def chunk_vectors(user_id: int) -> np.ndarray | None:
+    """All of the user's resume chunk embeddings, (N, D), or None if no resume."""
+    if not has_index(user_id):
+        _rebuild_from_db(user_id)
+    if not has_index(user_id):
+        return None
+    index = faiss.read_index(_index_path(user_id))
+    return index.reconstruct_n(0, index.ntotal)
 
 
 def delete_index(user_id: int) -> None:

@@ -16,7 +16,7 @@
           "request": {
             "method": "POST",
             "header": [{ "key": "Content-Type", "value": "application/json" }],
-            "body": { "mode": "raw", "raw": "{\n  \"email\": \"jane@example.com\",\n  \"password\": \"s3cret123\"\n}" },
+            "body": { "mode": "raw", "raw": "{\n  \"email\": \"jane@example.com\",\n  \"password\": \"Str0ng!Passw0rd\",\n  \"confirm_password\": \"Str0ng!Passw0rd\"\n}" },
             "url": "{{base_url}}/auth/register"
           }
         },
@@ -29,7 +29,7 @@
               "mode": "urlencoded",
               "urlencoded": [
                 { "key": "username", "value": "jane@example.com" },
-                { "key": "password", "value": "s3cret123" }
+                { "key": "password", "value": "Str0ng!Passw0rd" }
               ]
             },
             "url": "{{base_url}}/auth/login"

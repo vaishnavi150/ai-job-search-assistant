@@ -1,5 +1,7 @@
 # Render Blueprint: Dashboard -> New -> Blueprint -> pick this repo.
-# You'll be prompted for the values marked `sync: false`.
+# You'll be prompted for the values marked `sync: false`. Values for those
+# keys added after the Blueprint was created are set in the Dashboard
+# (service -> Environment); see README "Deploying to Render".
 databases:
   - name: ai-job-assistant-db
     plan: free
@@ -28,8 +30,18 @@ services:
         sync: false
       - key: GROQ_MODEL
         value: openai/gpt-oss-120b
-      # Frontend URL, e.g. https://ai-job-assistant-web.onrender.com
+      # Frontend URL(s), e.g. https://ai-job-assistant-web.onrender.com
       - key: FRONTEND_ORIGIN
+        sync: false
+      # Password-reset emails. Render's free tier blocks SMTP ports, so this
+      # uses Brevo's HTTP API (free: 300 emails/day). Leave BREVO_API_KEY
+      # unset to disable reset emails; everything else keeps working.
+      - key: EMAIL_PROVIDER
+        value: brevo
+      - key: BREVO_API_KEY
+        sync: false
+      # A sender address verified in Brevo (Senders & IP -> Senders).
+      - key: EMAIL_FROM
         sync: false
 
   - type: web
@@ -42,6 +54,23 @@ services:
       - type: rewrite
         source: /*
         destination: /index.html
+    headers:
+      - path: /*
+        name: X-Frame-Options
+        value: DENY
+      - path: /*
+        name: X-Content-Type-Options
+        value: nosniff
+      - path: /*
+        name: Referrer-Policy
+        value: strict-origin-when-cross-origin
+      - path: /*
+        name: Permissions-Policy
+        value: camera=(), microphone=(), geolocation=()
+      # If the API moves off *.onrender.com, add its origin to connect-src.
+      - path: /*
+        name: Content-Security-Policy
+        value: "default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'self' https://*.onrender.com; frame-ancestors 'none'; base-uri 'self'; form-action 'self'; object-src 'none'"
     envVars:
       # Backend URL, e.g. https://ai-job-assistant-api.onrender.com
       - key: VITE_API_BASE_URL

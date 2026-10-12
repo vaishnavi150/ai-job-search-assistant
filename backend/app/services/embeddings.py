@@ -4,10 +4,13 @@ Runtime instead of PyTorch, which keeps memory low enough for small hosts
 like Render's free tier. Downloads the model on first use - run
 `python -m app.services.embeddings` to pre-download it (the Render build
 does this)."""
+import logging
+
 import numpy as np
 
 from app.config import settings
 
+logger = logging.getLogger(__name__)
 _model = None
 
 
@@ -25,6 +28,7 @@ def _get_model():
                 cache_dir=settings.embedding_cache_dir,
             )
         except Exception as exc:  # network error, no cached weights, etc.
+            logger.error("Embedding model load failed: %s", exc)
             raise EmbeddingModelUnavailableError(
                 f"Couldn't load the embedding model '{settings.embedding_model}'. "
                 "It downloads on first use, so this usually means no internet "

@@ -53,7 +53,7 @@ def client():
 def test_health(client):
     resp = client.get("/health")
     assert resp.status_code == 200
-    assert resp.json() == {"status": "ok"}
+    assert resp.json()["status"] == "ok"
 
 
 def test_create_and_list_applications(client):
@@ -94,9 +94,42 @@ def test_delete_application(client):
 
 
 def test_register_and_login_flow(client):
-    resp = client.post("/auth/register", json={"email": "new@example.com", "password": "s3cret123"})
+    resp = client.post("/auth/register", json={"email": "new@example.com", "password": "S3cret!123"})
     assert resp.status_code == 201
     assert resp.json()["email"] == "new@example.com"
 
-    resp = client.post("/auth/register", json={"email": "new@example.com", "password": "s3cret123"})
-    assert resp.status_code == 400  # duplicate email rejected
+    resp = client.post("/auth/register", json={"email": "new@example.com", "password": "S3cret!123"})
+    assert resp.status_code == 409  # duplicate email rejected
+
+
+def test_invalid_status_is_rejected(client):
+    resp = client.post("/applications", json={"company": "Acme", "job_title": "Engineer", "status": "hired"})
+    assert resp.status_code == 422
+    app_id = client.post("/applications", json={"company": "Acme", "job_title": "Engineer"}).json()["id"]
+    assert client.patch(f"/applications/{app_id}", json={"status": "bogus"}).status_code == 422
+
+
+def test_filter_by_status_and_job_url_validation(client):
+    client.post("/applications", json={"company": "A", "job_title": "X", "status": "applied"})
+    client.post("/applications", json={"company": "B", "job_title": "Y"})
+    resp = client.get("/applications", params={"status": "applied"})
+    assert [a["company"] for a in resp.json()] == ["A"]
+    bad = client.post("/applications", json={"company": "C", "job_title": "Z", "job_url": "javascript:alert(1)"})
+    assert bad.status_code == 422
+
+
+def test_applications_are_scoped_to_owner(client):
+    """A user can't read or change another user's rows."""
+    from app.models import Application
+    from app.database import get_db
+    from app.main import app as fastapi_app
+    db = next(fastapi_app.dependency_overrides[get_db]())
+    other = User(email="other@example.com", hashed_password="unused")
+    db.add(other)
+    db.commit()
+    row = Application(user_id=other.id, company="Secret", job_title="Hidden")
+    db.add(row)
+    db.commit()
+    assert all(a["company"] != "Secret" for a in client.get("/applications").json())
+    assert client.patch(f"/applications/{row.id}", json={"status": "offer"}).status_code == 404
+    assert client.delete(f"/applications/{row.id}").status_code == 404

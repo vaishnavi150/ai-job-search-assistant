@@ -1,7 +1,11 @@
 """Generates interview questions from a job description, and drives a
 stateless mock-interview chat (the client sends conversation history back
 each turn; nothing is persisted server-side for this starter)."""
+import re
+
 from app.services import llm
+
+_PREFIX_RE = re.compile(r"^\s*(?:[-*•]|\d+[.):]|Q\d+[.:])\s*", re.IGNORECASE)
 
 QUESTIONS_SYSTEM_PROMPT = (
     "You generate realistic technical and behavioral interview questions "
@@ -28,11 +32,14 @@ def generate_questions(job_description: str, num_questions: int = 5) -> list[str
         f"of technical and behavioral."
     )
     response_text = llm.generate(prompt, system=QUESTIONS_SYSTEM_PROMPT)
-    questions = [
-        line.strip().lstrip("-1234567890.").strip()
-        for line in response_text.splitlines()
-        if line.strip()
-    ]
+    questions = []
+    for line in response_text.splitlines():
+        cleaned = _PREFIX_RE.sub("", line).replace("**", "").strip()
+        # Skip headings like "Technical:" or a stray preamble line.
+        if len(cleaned) > 15 and not cleaned.endswith(":"):
+            questions.append(cleaned)
+    if not questions:
+        raise llm.LLMUnavailableError("The AI service returned an unusable response. Please try again.")
     return questions[:num_questions]
 
 

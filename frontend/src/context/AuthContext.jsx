@@ -1,34 +1,87 @@
-import { createContext, useContext, useState } from 'react';
+import { createContext, useCallback, useContext, useEffect, useState } from 'react';
 import * as api from '../api';
 
 const AuthContext = createContext(null);
 
 export function AuthProvider({ children }) {
-  const [email, setEmail] = useState(() => localStorage.getItem('email') || null);
+  const [user, setUser] = useState(null);
+  // 'checking' until a stored token has been verified with the server.
+  const [status, setStatus] = useState(() => (api.getToken() ? 'checking' : 'anonymous'));
+  const [sessionExpired, setSessionExpired] = useState(false);
 
-  const login = async (emailInput, password) => {
-    const data = await api.login(emailInput, password);
-    api.setToken(data.access_token);
-    localStorage.setItem('email', emailInput);
-    setEmail(emailInput);
-  };
+  const clearSessionExpired = useCallback(() => setSessionExpired(false), []);
 
-  const register = async (emailInput, password) => {
-    await api.register(emailInput, password);
-    await login(emailInput, password);
-  };
-
-  const logout = () => {
+  const logout = useCallback(() => {
     api.clearToken();
-    localStorage.removeItem('email');
-    setEmail(null);
+    setUser(null);
+    setStatus('anonymous');
+  }, []);
+
+  useEffect(() => {
+    if (!api.getToken()) return;
+    let cancelled = false;
+    api.getMe()
+      .then((me) => {
+        if (!cancelled) {
+          setUser(me);
+          setStatus('authenticated');
+        }
+      })
+      .catch((err) => {
+        if (cancelled) return;
+        if (err.status === 401) {
+          logout();
+        } else {
+          // Server unreachable: keep the token, let pages show their own errors.
+          setStatus('authenticated');
+        }
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [logout]);
+
+  useEffect(
+    () =>
+      api.onApiEvent('api:unauthorized', () => {
+        if (api.getToken()) setSessionExpired(true);
+        logout();
+      }),
+    [logout],
+  );
+
+  const startSession = async (token) => {
+    api.setToken(token);
+    const me = await api.getMe();
+    setUser(me);
+    setStatus('authenticated');
+    setSessionExpired(false);
   };
 
-  return (
-    <AuthContext.Provider value={{ email, isAuthenticated: !!email, login, register, logout }}>
-      {children}
-    </AuthContext.Provider>
-  );
+  const login = async (email, password) => {
+    const data = await api.login(email.trim(), password);
+    await startSession(data.access_token);
+  };
+
+  const register = async (email, password, confirmPassword) => {
+    await api.register(email.trim(), password, confirmPassword);
+    await login(email, password);
+  };
+
+  const value = {
+    user,
+    email: user?.email ?? null,
+    status,
+    isAuthenticated: status === 'authenticated',
+    sessionExpired,
+    clearSessionExpired,
+    login,
+    register,
+    logout,
+    startSession,
+  };
+
+  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 }
 
 export function useAuth() {

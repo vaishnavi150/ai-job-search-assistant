@@ -1,4 +1,5 @@
-"""Creates all tables. Run once before starting the app for the first time.
+"""Creates all tables and applies column migrations. The app also does this
+on startup, so running it by hand is optional.
 
     python scripts/init_db.py
 """
@@ -7,13 +8,12 @@ import os
 
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 
-from app.database import Base, engine
-import app.models  # noqa: F401 - registers models on Base
+from app.migrations import run_migrations
 
 
 def main():
-    Base.metadata.create_all(bind=engine)
-    print("Tables created.")
+    run_migrations()
+    print("Database is up to date.")
 
 
 if __name__ == "__main__":
