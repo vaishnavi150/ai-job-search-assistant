@@ -4,6 +4,7 @@ import { useAuth } from '../context/AuthContext';
 import PasswordField from '../components/PasswordField';
 import { Alert, Button, PageHeader } from '../components/ui';
 import { isPasswordValid } from '../utils/password';
+import { clearOnEdit } from '../utils/forms';
 
 export default function Account() {
   const { user, email, startSession, logout } = useAuth();
@@ -72,11 +73,11 @@ export default function Account() {
         <Alert kind="error">{error}</Alert>
         <Alert kind="success">{success}</Alert>
         <form className="form narrow" onSubmit={changePassword} noValidate>
-          <PasswordField id="cur-pw" label="Current password" value={current} onChange={setCurrent}
+          <PasswordField id="cur-pw" label="Current password" value={current} onChange={clearOnEdit(setCurrent, setFieldErrors, 'current')}
                          autoComplete="current-password" error={fieldErrors.current} />
-          <PasswordField id="new-pw" label="New password" value={next} onChange={setNext}
+          <PasswordField id="new-pw" label="New password" value={next} onChange={clearOnEdit(setNext, setFieldErrors, 'next', 'confirm')}
                          autoComplete="new-password" showRules error={fieldErrors.next} />
-          <PasswordField id="confirm-pw" label="Confirm new password" value={confirm} onChange={setConfirm}
+          <PasswordField id="confirm-pw" label="Confirm new password" value={confirm} onChange={clearOnEdit(setConfirm, setFieldErrors, 'confirm')}
                          autoComplete="new-password"
                          error={fieldErrors.confirm || (confirm && confirm !== next ? 'Passwords don’t match.' : '')} />
           <Button type="submit" loading={saving}>{saving ? 'Updating…' : 'Update password'}</Button>

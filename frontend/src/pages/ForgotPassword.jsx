@@ -65,7 +65,7 @@ export default function ForgotPassword() {
             id="forgot-email"
             type="email"
             value={email}
-            onChange={(e) => setEmail(e.target.value)}
+            onChange={(e) => { setEmail(e.target.value); setFieldError(''); }}
             autoComplete="email"
             autoFocus
             aria-invalid={fieldError ? true : undefined}

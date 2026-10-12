@@ -228,6 +228,18 @@ def test_reset_rejects_garbage_token(api):
     assert resp.status_code == 400
 
 
+@pytest.mark.parametrize("token", ["", "abc", "KwXaMse4NS"])
+def test_truncated_reset_link_gets_the_generic_message(api, token):
+    # e.g. an email client that cut the link short
+    for path, body in [
+        ("/auth/reset-password/validate", {"token": token}),
+        ("/auth/reset-password", {"token": token, "password": "Res3t!Password", "confirm_password": "Res3t!Password"}),
+    ]:
+        resp = api.post(path, json=body)
+        assert resp.status_code == 400
+        assert resp.json()["detail"] == auth_router.INVALID_RESET_LINK
+
+
 def test_forgot_password_email_rate_limit_keeps_generic_response(api, sent_emails):
     register_and_login(api)
     responses = [api.post("/auth/forgot-password", json={"email": "jane@example.com"}) for _ in range(5)]

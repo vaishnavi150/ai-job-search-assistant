@@ -153,6 +153,12 @@ Render's free tier blocks outbound SMTP ports, so on Render use **Brevo**
 4. On the Render API service set `EMAIL_PROVIDER=brevo`,
    `BREVO_API_KEY=<key>`, `EMAIL_FROM=<verified address>`.
 
+After a reset request the API log shows either `Password reset email sent`
+or `Password reset email failed: Brevo returned …` with Brevo's reason.
+The usual ones: `Key not found` (wrong key — use an API key starting `xkeysib-`, not
+the SMTP key), `unrecognised IP address` (turn off *Security → Authorised IPs*
+in Brevo, since Render's outgoing IP changes), or an unverified sender.
+
 For local development you can instead use any SMTP server (Gmail with an
 App Password, Mailtrap, …) with `EMAIL_PROVIDER=smtp`. If email isn't
 configured the app still works; the Forgot Password page says reset emails

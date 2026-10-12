@@ -6,6 +6,7 @@ import AuthLayout from '../components/AuthLayout';
 import PasswordField from '../components/PasswordField';
 import { Alert, Button, Spinner } from '../components/ui';
 import { isPasswordValid } from '../utils/password';
+import { clearOnEdit } from '../utils/forms';
 
 export default function ResetPassword() {
   const [params] = useSearchParams();
@@ -86,7 +87,7 @@ export default function ResetPassword() {
           id="reset-password"
           label="New password"
           value={password}
-          onChange={setPassword}
+          onChange={clearOnEdit(setPassword, setFieldErrors, 'password', 'confirm')}
           autoComplete="new-password"
           autoFocus
           showRules
@@ -96,7 +97,7 @@ export default function ResetPassword() {
           id="reset-confirm"
           label="Confirm new password"
           value={confirm}
-          onChange={setConfirm}
+          onChange={clearOnEdit(setConfirm, setFieldErrors, 'confirm')}
           autoComplete="new-password"
           error={fieldErrors.confirm || (confirm && confirm !== password ? 'Passwords don’t match.' : '')}
         />

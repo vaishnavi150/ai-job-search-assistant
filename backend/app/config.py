@@ -66,6 +66,18 @@ class Settings(BaseSettings):
         # fastembed only accepts with its organisation prefix.
         return f"sentence-transformers/{v}" if v == "all-MiniLM-L6-v2" else v
 
+    @field_validator("email_provider", "llm_provider")
+    @classmethod
+    def normalize_provider(cls, v: str) -> str:
+        # "Brevo" or "brevo " pasted into a dashboard would otherwise silently disable email.
+        return v.strip().lower()
+
+    @field_validator("brevo_api_key", "email_from", "smtp_host", "smtp_username", "frontend_url")
+    @classmethod
+    def strip_whitespace(cls, v: str) -> str:
+        # A trailing space or newline in a pasted key makes Brevo answer "Key not found".
+        return v.strip()
+
     @property
     def sqlalchemy_database_url(self) -> str:
         # Some hosts hand out postgres:// URLs, which SQLAlchemy 2 no longer accepts.

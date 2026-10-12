@@ -57,11 +57,11 @@ class ForgotPasswordRequest(BaseModel):
 
 
 class ResetTokenCheck(BaseModel):
-    token: str = Field(min_length=20, max_length=200)
+    token: str = Field(max_length=200)
 
 
 class ResetPasswordRequest(BaseModel):
-    token: str = Field(min_length=20, max_length=200)
+    token: str = Field(max_length=200)
     password: str = Field(max_length=128)
     confirm_password: str = Field(max_length=128)
 

@@ -5,6 +5,7 @@ import AuthLayout from '../components/AuthLayout';
 import PasswordField from '../components/PasswordField';
 import { Alert, Button, Field } from '../components/ui';
 import { isPasswordValid, isValidEmail } from '../utils/password';
+import { clearOnEdit } from '../utils/forms';
 
 export default function Register() {
   const { register } = useAuth();
@@ -14,6 +15,7 @@ export default function Register() {
   const [confirm, setConfirm] = useState('');
   const [error, setError] = useState('');
   const [fieldErrors, setFieldErrors] = useState({});
+  const onEmail = clearOnEdit(setEmail, setFieldErrors, 'email');
   const [loading, setLoading] = useState(false);
 
   const handleSubmit = async (e) => {
@@ -52,7 +54,7 @@ export default function Register() {
             id="reg-email"
             type="email"
             value={email}
-            onChange={(e) => setEmail(e.target.value)}
+            onChange={(e) => onEmail(e.target.value)}
             autoComplete="email"
             autoFocus
             aria-invalid={fieldErrors.email ? true : undefined}
@@ -62,7 +64,7 @@ export default function Register() {
         <PasswordField
           id="reg-password"
           value={password}
-          onChange={setPassword}
+          onChange={clearOnEdit(setPassword, setFieldErrors, 'password', 'confirm')}
           autoComplete="new-password"
           showRules
           error={fieldErrors.password}
@@ -71,7 +73,7 @@ export default function Register() {
           id="reg-confirm"
           label="Confirm password"
           value={confirm}
-          onChange={setConfirm}
+          onChange={clearOnEdit(setConfirm, setFieldErrors, 'confirm')}
           autoComplete="new-password"
           error={fieldErrors.confirm || (confirm && confirm !== password ? 'Passwords don’t match.' : '')}
         />

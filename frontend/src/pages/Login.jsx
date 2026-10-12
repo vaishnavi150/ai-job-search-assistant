@@ -5,6 +5,7 @@ import AuthLayout from '../components/AuthLayout';
 import PasswordField from '../components/PasswordField';
 import { Alert, Button, Field } from '../components/ui';
 import { isValidEmail } from '../utils/password';
+import { clearOnEdit } from '../utils/forms';
 
 export default function Login() {
   const { login, sessionExpired } = useAuth();
@@ -16,6 +17,7 @@ export default function Login() {
   const [fieldErrors, setFieldErrors] = useState({});
   const [loading, setLoading] = useState(false);
   const notice = location.state?.notice;
+  const onEmail = clearOnEdit(setEmail, setFieldErrors, 'email');
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -47,7 +49,7 @@ export default function Login() {
             id="login-email"
             type="email"
             value={email}
-            onChange={(e) => setEmail(e.target.value)}
+            onChange={(e) => onEmail(e.target.value)}
             autoComplete="email"
             autoFocus
             aria-invalid={fieldErrors.email ? true : undefined}
@@ -57,7 +59,7 @@ export default function Login() {
         <PasswordField
           id="login-password"
           value={password}
-          onChange={setPassword}
+          onChange={clearOnEdit(setPassword, setFieldErrors, 'password')}
           autoComplete="current-password"
           error={fieldErrors.password}
         />
